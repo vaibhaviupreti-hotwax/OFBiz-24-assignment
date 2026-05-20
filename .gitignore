@@ -39,3 +39,5 @@ desktop.ini
 *.patch
 node_modules/
 /docs/asciidoc/images/
+.github/workflows/
+.asf.yaml
