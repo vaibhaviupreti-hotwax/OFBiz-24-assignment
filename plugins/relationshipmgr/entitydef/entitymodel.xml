@@ -66,91 +66,135 @@
         package-name="org.apache.ofbiz.party.demo"
         title="Demo Organization">
 
-    <field name="demoPartyId" type="id"/>
-    <field name="organizationName" type="short-varchar"/>
-    <field name="groupName" type="short-varchar"/>
+        <field name="demoPartyId" type="id"/>
+        <field name="organizationName" type="short-varchar"/>
+        <field name="groupName" type="short-varchar"/>
 
-    <prim-key field="demoPartyId"/>
+        <prim-key field="demoPartyId"/>
 
-    <relation type="one"
-              fk-name="DEMO_ORG_PARTY"
-              rel-entity-name="DemoParty">
-        <key-map field-name="demoPartyId"
-                 rel-field-name="demoPartyId"/>
-    </relation>
+        <relation type="one"
+                fk-name="DEMO_ORG_PARTY"
+                rel-entity-name="DemoParty">
+            <key-map field-name="demoPartyId"
+                    rel-field-name="demoPartyId"/>
+        </relation>
 
-</entity>
+    </entity>
+  
+     <entity entity-name="DemoPartyRole"
+            table-name="demo_party_role"
+            package-name="org.apache.ofbiz.party.demo"
+            title="Demo Party Role">
 
-<entity entity-name="DemoPartyRole"
-        table-name="demo_party_role"
-        package-name="org.apache.ofbiz.party.demo"
-        title="Demo Party Role">
+        <field name="demoPartyId" type="id"/>
+        <field name="roleTypeId" type="id"/>
 
-    <field name="demoPartyId" type="id"/>
-    <field name="roleTypeId" type="id"/>
+        <prim-key field="demoPartyId"/>
+        <prim-key field="roleTypeId"/>
 
-    <prim-key field="demoPartyId"/>
-    <prim-key field="roleTypeId"/>
+        <relation type="one"
+                  fk-name="DEMO_PARTY_ROLE_PARTY"
+                  rel-entity-name="DemoParty">
+            <key-map field-name="demoPartyId"
+                     rel-field-name="demoPartyId"/>
+        </relation>
 
-    <relation type="one"
-              fk-name="DEMO_PARTY_ROLE_PARTY"
-              rel-entity-name="DemoParty">
-        <key-map field-name="demoPartyId"
-                 rel-field-name="demoPartyId"/>
-    </relation>
+    </entity>
 
-</entity>
+      <entity entity-name="DemoContactMech"
+            table-name="demo_contact_mech"
+            package-name="org.apache.ofbiz.party.contact.demo"
+            title="Demo Contact Mechanism">
 
-    <!-- <entity entity-name="DemoPartyRole" package-name="org.apache.ofbiz.party.demo" title="Demo Party Role">
-        <field name="demoPartyId" type="id" primary-key="true"/>
-        <field name="roleTypeId" type="id" primary-key="true"/>
-        <fk name="DemoPartyRoleParty">
-            <entity-name>DemoParty</entity-name>
-            <field name="demoPartyId"/>
-        </fk> -->
-    
-    <!-- <entity entity-name="DemoContactMech" package-name="org.apache.ofbiz.party.contact.demo" title="Demo Contact Mechanism">
-        <field name="demoContactMechId" type="id" primary-key="true"/>
-        <field name="contactMechTypeId" type="id" required="true"/>
+        <field name="demoContactMechId" type="id"/>
+        <field name="contactMechTypeId" type="id"/>
         <field name="infoString" type="very-long"/>
-    </entity> -->
 
-    <!-- <entity entity-name="DemoPartyContactMech" package-name="org.apache.ofbiz.party.contact.demo" title="Demo Party Contact Mechanism">
-        <field name="demoPartyId" type="id" primary-key="true"/>
-        <field name="demoContactMechId" type="id" primary-key="true"/>
-        <field name="fromDate" type="date-time" primary-key="true"/>
-        <field name="allowSolicitation" type="indicator" default-value="Y"/>
-        <fk name="DemoPCMParty">
-            <entity-name>DemoParty</entity-name>
-            <field name="demoPartyId"/>
-        </fk>
-        <fk name="DemoPCMContactMech">
-            <entity-name>DemoContactMech</entity-name>
-            <field name="demoContactMechId"/>
-        </fk>
-    </entity> -->
+        <prim-key field="demoContactMechId"/>
 
-    <!-- <entity entity-name="DemoGeo" package-name="org.apache.ofbiz.common.geo.demo" title="Demo Geographic Entity">
-        <field name="demoGeoId" type="id" primary-key="true"/>
+    </entity>
+
+     <entity entity-name="DemoPartyContactMech"
+            table-name="demo_party_contact_mech"
+            package-name="org.apache.ofbiz.party.contact.demo"
+            title="Demo Party Contact Mechanism">
+
+        <field name="demoPartyId" type="id"/>
+        <field name="demoContactMechId" type="id"/>
+        <field name="fromDate" type="date-time"/>
+        <field name="allowSolicitation" type="indicator"/>
+
+        <prim-key field="demoPartyId"/>
+        <prim-key field="demoContactMechId"/>
+        <prim-key field="fromDate"/>
+
+        <relation type="one"
+                  fk-name="DEMO_PCM_PARTY"
+                  rel-entity-name="DemoParty">
+            <key-map field-name="demoPartyId"
+                     rel-field-name="demoPartyId"/>
+        </relation>
+
+        <relation type="one"
+                  fk-name="DEMO_PCM_CONTACT"
+                  rel-entity-name="DemoContactMech">
+            <key-map field-name="demoContactMechId"
+                     rel-field-name="demoContactMechId"/>
+        </relation>
+
+    </entity>
+
+     <entity entity-name="DemoGeo"
+            table-name="demo_geo"
+            package-name="org.apache.ofbiz.common.geo.demo"
+            title="Demo Geographic Entity">
+
+        <field name="demoGeoId" type="id"/>
         <field name="geoName" type="short-varchar"/>
         <field name="geoTypeId" type="id"/>
-    </entity> -->
 
-    <!-- <entity entity-name="DemoPostalAddress" package-name="org.apache.ofbiz.party.contact.demo" title="Demo Postal Address" extends="DemoContactMech">
-        <field name="address1" type="short-varchar" required="true"/>
+        <prim-key field="demoGeoId"/>
+
+    </entity>
+
+    <entity entity-name="DemoPostalAddress"
+            table-name="demo_postal_address"
+            package-name="org.apache.ofbiz.party.contact.demo"
+            title="Demo Postal Address">
+
+        <field name="demoContactMechId" type="id"/>
+
+        <field name="address1" type="short-varchar"/>
         <field name="address2" type="short-varchar"/>
-        <field name="city" type="short-varchar" required="true"/>
+        <field name="city" type="short-varchar"/>
         <field name="stateProvinceGeoId" type="id"/>
         <field name="postalCode" type="short-varchar"/>
         <field name="countryGeoId" type="id"/>
-        <fk name="DemoPostalAddressState">
-            <entity-name>DemoGeo</entity-name>
-            <field name="stateProvinceGeoId"/>
-        </fk>
-        <fk name="DemoPostalAddressCountry">
-            <entity-name>DemoGeo</entity-name>
-            <field name="countryGeoId"/>
-        </fk>
-    </entity> -->
+
+        <prim-key field="demoContactMechId"/>
+
+        <relation type="one"
+                  fk-name="DEMO_POSTAL_CM"
+                  rel-entity-name="DemoContactMech">
+            <key-map field-name="demoContactMechId"
+                     rel-field-name="demoContactMechId"/>
+        </relation>
+
+        <relation type="one"
+                  fk-name="DEMO_POSTAL_STATE"
+                  rel-entity-name="DemoGeo">
+            <key-map field-name="stateProvinceGeoId"
+                     rel-field-name="demoGeoId"/>
+        </relation>
+
+        <relation type="one"
+                  fk-name="DEMO_POSTAL_COUNTRY"
+                  rel-entity-name="DemoGeo">
+            <key-map field-name="countryGeoId"
+                     rel-field-name="demoGeoId"/>
+        </relation>
+
+    </entity>
+
 
 </entitymodel>

@@ -18,9 +18,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
 <entity-engine-xml>
 
-  <DemoParty
+    <DemoParty
         demoPartyId="DP100"
         demoPartyTypeId="PERSON"
         demoStatusId="ACTIVE"/>
@@ -28,9 +31,19 @@ under the License.
     <DemoParty
         demoPartyId="DP101"
         demoPartyTypeId="PERSON"
-        demoStatusId="INACTIVE"/>
+        demoStatusId="ACTIVE"/>
 
-      <DemoParty
+    <DemoParty
+        demoPartyId="DP102"
+        demoPartyTypeId="PERSON"
+        demoStatusId="ACTIVE"/>
+
+    <DemoParty
+        demoPartyId="DP103"
+        demoPartyTypeId="PERSON"
+        demoStatusId="ACTIVE"/>
+
+    <DemoParty
         demoPartyId="DP200"
         demoPartyTypeId="ORGANIZATION"
         demoStatusId="ACTIVE"/>
@@ -40,52 +53,68 @@ under the License.
         demoPartyTypeId="ORGANIZATION"
         demoStatusId="ACTIVE"/>
 
-       <DemoPerson
-        demoPersonId="P100"
-        demoPartyId="DP100"
-        firstName="Vaibhavi"
-        lastName="Upreti"
-        gender="F"
-        birthDate="1999-09-09"
-        occupation="Developer"
-        demoEmploymentStatusId="EMPLOYED"
-        demoResidenceStatusId="INDIAN"
-        demoMaritalStatusId="SINGLE"/>
-       <DemoPerson
-        demoPersonId="P101"
-        demoPartyId="DP101"
-        firstName="Test"
-        lastName="User"
-        gender="M"
-        birthDate="2002-02-02"
-        occupation="Engineer"
-        demoEmploymentStatusId="EMPLOYED"
-        demoResidenceStatusId="INDIAN"
-        demoMaritalStatusId="SINGLE"/>
 
-      <DemoOrganization
+   <!-- ......................................................................... -->
+
+    <DemoPerson
+        demoPartyId="DP100"
+        firstName="Aditi"
+        lastName="Joshi"
+        gender="F"
+        birthDate="2001-04-12"
+        occupation="Student"/>
+
+    <DemoPerson
+        demoPartyId="DP101"
+        firstName="Pratham"
+        lastName="Sahu"
+        gender="M"
+        birthDate="2000-08-19"
+        occupation="Developer"/>
+
+    <DemoPerson
+        demoPartyId="DP102"
+        firstName="Seema"
+        lastName="Verma"
+        gender="F"
+        birthDate="1998-11-03"
+        occupation="Teacher"/>
+
+    <DemoPerson
+        demoPartyId="DP103"
+        firstName="Dushyant"
+        lastName="Yadav"
+        gender="M"
+        birthDate="1997-06-28"
+        occupation="HR"/>
+
+
+   <!-- ......................................................................... -->
+
+    <DemoOrganization
         demoPartyId="DP200"
-        organizationName="Sharma Traders"
-        groupName="Sharma Group"/>
+        organizationName="Bright Future College"
+        groupName="Education Group"/>
 
     <DemoOrganization
         demoPartyId="DP201"
-        organizationName="Gupta Electronics"
-        groupName="Gupta Electronics"/>
+        organizationName="Skyline Technologies"
+        groupName="Technology Division"/>
 
-        <!-- Demo Party Roles -->
+
+   <!-- ......................................................................... -->
 
     <DemoPartyRole
         demoPartyId="DP100"
-        roleTypeId="EMPLOYEE"/>
+        roleTypeId="STUDENT"/>
 
     <DemoPartyRole
         demoPartyId="DP101"
-        roleTypeId="MANAGER"/>
+        roleTypeId="EMPLOYEE"/>
 
     <DemoPartyRole
         demoPartyId="DP102"
-        roleTypeId="CUSTOMER"/>
+        roleTypeId="TEACHER"/>
 
     <DemoPartyRole
         demoPartyId="DP103"
@@ -93,10 +122,72 @@ under the License.
 
     <DemoPartyRole
         demoPartyId="DP200"
-        roleTypeId="SUPPLIER"/>
+        roleTypeId="COLLEGE"/>
 
     <DemoPartyRole
         demoPartyId="DP201"
-        roleTypeId="VENDOR"/>
+        roleTypeId="EMPLOYER"/>
+
+
+  <!-- ......................................................................... -->
+
+    <DemoGeo
+        demoGeoId="IND"
+        geoName="India"
+        geoTypeId="COUNTRY"/>
+
+    <DemoGeo
+        demoGeoId="CG"
+        geoName="Chhattisgarh"
+        geoTypeId="STATE"/>
+
+
+    <!-- ......................................................................... -->
+
+    <DemoContactMech
+        demoContactMechId="CM100"
+        contactMechTypeId="EMAIL_ADDRESS"
+        infoString="aditi.joshi@example.com"/>
+
+    <DemoContactMech
+        demoContactMechId="CM101"
+        contactMechTypeId="PHONE_MOBILE"
+        infoString="9876543210"/>
+
+    <DemoContactMech
+        demoContactMechId="CM102"
+        contactMechTypeId="POSTAL_ADDRESS"
+        infoString="Home Address"/>
+
+
+    <!-- ......................................................................... -->
+
+    <DemoPostalAddress
+        demoContactMechId="CM102"
+        address1="Street 12"
+        address2="Near City Mall"
+        city="Raipur"
+        stateProvinceGeoId="CG"
+        postalCode="492001"
+        countryGeoId="IND"/>
+    <!-- ......................................................................... -->
+
+    <DemoPartyContactMech
+        demoPartyId="DP100"
+        demoContactMechId="CM100"
+        fromDate="2026-01-01 00:00:00.0"
+        allowSolicitation="Y"/>
+
+    <DemoPartyContactMech
+        demoPartyId="DP100"
+        demoContactMechId="CM101"
+        fromDate="2026-01-01 00:00:00.0"
+        allowSolicitation="Y"/>
+
+    <DemoPartyContactMech
+        demoPartyId="DP101"
+        demoContactMechId="CM102"
+        fromDate="2026-01-01 00:00:00.0"
+        allowSolicitation="N"/>
 
 </entity-engine-xml>
