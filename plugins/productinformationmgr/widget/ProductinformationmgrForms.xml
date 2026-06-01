@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://ofbiz.apache.org/Widget-Form"
+       xsi:schemaLocation="http://ofbiz.apache.org/Widget-Form http://ofbiz.apache.org/dtds/widget-form.xsd">
+
+    <!-- Product Forms -->
+    <form name="FindProductForm" type="single" target="FindProduct" default-entity-name="PimProduct">
+        <field name="productId" title="Product ID"><text-find/></field>
+        <field name="productName" title="Product Name"><text-find/></field>
+        <field name="productTypeId" title="Product Type">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="PimProductType" description="${description}"/>
+            </drop-down>
+        </field>
+        <field name="searchButton" title="Search"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListProductsForm" type="list" list-name="listIt" target="FindProduct" paginate-target="FindProduct"
+          default-entity-name="PimProduct" separate-columns="true" style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="entityName" value="PimProduct"/>
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="noConditionFind" value="Y"/>
+            </service>
+        </actions>
+        <field name="productId" title="Product ID" widget-style="buttontext">
+            <hyperlink description="${productId}" target="EditProduct">
+                <parameter param-name="productId"/>
+            </hyperlink>
+        </field>
+        <field name="productName" title="Product Name"><display/></field>
+        <field name="productTypeId" title="Product Type">
+            <display-entity entity-name="PimProductType"/>
+        </field>
+        <field name="isVirtual" title="Virtual"><display/></field>
+        <field name="isVarient" title="Variant"><display/></field>
+        <field name="fromDate" title="From Date"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProduct" also-url-parameter="false">
+                <parameter param-name="productId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="EditProductForm" type="single" target="updatePimProduct" title="" default-map-name="product" default-entity-name="PimProduct">
+        <alt-target use-when="product==null" target="createPimProduct"/>
+        <field name="productId" title="Product ID" use-when="product!=null"><display/></field>
+        <field name="productId" title="Product ID" use-when="product==null"><text/></field>
+        <field name="productName" title="Product Name" required-field="true"><text/></field>
+        <field name="productTypeId" title="Product Type">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProductType" description="${description}"/>
+            </drop-down>
+        </field>
+        <field name="isVirtual" title="Is Virtual">
+            <drop-down allow-empty="false" no-current-selected-key="N">
+                <option key="Y" description="Yes"/>
+                <option key="N" description="No"/>
+            </drop-down>
+        </field>
+        <field name="isVarient" title="Is Variant">
+            <drop-down allow-empty="false" no-current-selected-key="N">
+                <option key="Y" description="Yes"/>
+                <option key="N" description="No"/>
+            </drop-down>
+        </field>
+        <field name="fromDate" title="From Date"><date-time type="timestamp"/></field>
+        <field name="submitButton" title="Save" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <!-- Product Content Forms -->
+    <form name="AddProductContentForm" type="single" target="createPimProductContent" default-entity-name="PimProductContent">
+        <field name="productId"><hidden value="${productId}"/></field>
+        <field name="productContentId" title="Content ID"><text/></field>
+        <field name="productContentTypeEnumId" title="Content Type">
+            <drop-down allow-empty="false">
+                <option key="IMAGE" description="Image"/>
+                <option key="DESCRIPTION" description="Description"/>
+                <option key="OTHER" description="Other"/>
+            </drop-down>
+        </field>
+        <field name="contentLocation" title="Content Location/URL"><text size="50"/></field>
+        <field name="submitButton" title="Add Content" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListProductContentsForm" type="list" list-name="productContents" default-entity-name="PimProductContent" style="basic-table">
+        <field name="productContentId" title="Content ID"><display/></field>
+        <field name="productContentTypeEnumId" title="Content Type"><display/></field>
+        <field name="contentLocation" title="Location"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductContent" also-url-parameter="false">
+                <parameter param-name="productContentId"/>
+                <parameter param-name="productId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Product Price Forms -->
+    <form name="AddProductPriceForm" type="single" target="createPimProductPrice" default-entity-name="PimProductPrice">
+        <field name="productId"><hidden value="${productId}"/></field>
+        <field name="productPriceId" title="Price ID"><text/></field>
+        <field name="priceTypeEnumId" title="Price Type">
+            <drop-down allow-empty="false">
+                <option key="LIST_PRICE" description="List Price"/>
+                <option key="PROMOTIONAL_PRICE" description="Promotional Price"/>
+                <option key="DEFAULT_PRICE" description="Default Price"/>
+            </drop-down>
+        </field>
+        <field name="price" title="Price"><text/></field>
+        <field name="fromDate" title="From Date"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date"><date-time type="timestamp"/></field>
+        <field name="submitButton" title="Add Price" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListProductPricesForm" type="list" list-name="productPrices" default-entity-name="PimProductPrice" style="basic-table">
+        <field name="productPriceId" title="Price ID"><display/></field>
+        <field name="priceTypeEnumId" title="Price Type"><display/></field>
+        <field name="price" title="Price"><display/></field>
+        <field name="fromDate" title="From Date"><display/></field>
+        <field name="thruDate" title="Thru Date"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductPrice" also-url-parameter="false">
+                <parameter param-name="productPriceId"/>
+                <parameter param-name="productId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Product Dimension Forms -->
+    <form name="AddProductDimensionForm" type="single" target="createPimProductDimension" default-entity-name="PimProductDimension">
+        <field name="productId"><hidden value="${productId}"/></field>
+        <field name="dimensionTypeEnumId" title="Dimension Type">
+            <drop-down allow-empty="false">
+                <option key="WEIGHT" description="Weight"/>
+                <option key="LENGTH" description="Length"/>
+                <option key="WIDTH" description="Width"/>
+                <option key="HEIGHT" description="Height"/>
+            </drop-down>
+        </field>
+        <field name="dimensionValue" title="Value"><text/></field>
+        <field name="valueUomId" title="UOM">
+            <drop-down allow-empty="false">
+                <option key="OUNCES" description="Ounces"/>
+                <option key="LBS" description="Pounds (Lbs)"/>
+                <option key="INCHES" description="Inches"/>
+                <option key="CM" description="Centimeters"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="Add Dimension" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListProductDimensionsForm" type="list" list-name="productDimensions" default-entity-name="PimProductDimension" style="basic-table">
+        <field name="dimensionTypeEnumId" title="Dimension Type"><display/></field>
+        <field name="dimensionValue" title="Value"><display/></field>
+        <field name="valueUomId" title="UOM"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductDimension" also-url-parameter="false">
+                <parameter param-name="productId"/>
+                <parameter param-name="dimensionTypeEnumId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Product Association Forms -->
+    <form name="AddProductAssocForm" type="single" target="createPimProductAssoc" default-entity-name="PimProductAssoc">
+        <field name="productId"><hidden value="${productId}"/></field>
+        <field name="toProductId" title="To Product">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProduct" key-field-name="productId" description="${productName} [${productId}]"/>
+            </drop-down>
+        </field>
+        <field name="productAssocTypeEnumId" title="Association Type">
+            <drop-down allow-empty="false">
+                <option key="VARIANT" description="Variant"/>
+                <option key="COMPONENT" description="Component / Package Member"/>
+                <option key="ACCESSORY" description="Accessory"/>
+            </drop-down>
+        </field>
+        <field name="fromDate" title="From Date"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date"><date-time type="timestamp"/></field>
+        <field name="submitButton" title="Add Association" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListProductAssocsForm" type="list" list-name="productAssocs" default-entity-name="PimProductAssoc" style="basic-table">
+        <field name="toProductId" title="To Product">
+            <display-entity entity-name="PimProduct" key-field-name="productId" description="${productName} [${productId}]"/>
+        </field>
+        <field name="productAssocTypeEnumId" title="Association Type"><display/></field>
+        <field name="fromDate" title="From Date"><display/></field>
+        <field name="thruDate" title="Thru Date"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductAssoc" also-url-parameter="false">
+                <parameter param-name="productId"/>
+                <parameter param-name="toProductId"/>
+                <parameter param-name="productAssocTypeEnumId"/>
+                <parameter param-name="fromDate"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Product Category Member Forms -->
+    <form name="AddProductCategoryMemberForm" type="single" target="createPimProductCategoryMember" default-entity-name="PimProductCategoryMember">
+        <field name="productId"><hidden value="${productId}"/></field>
+        <field name="productCategoryId" title="Product Category">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProductCategory" description="${categoryName} [${productCategoryId}]"/>
+            </drop-down>
+        </field>
+        <field name="fromDate" title="From Date"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date"><date-time type="timestamp"/></field>
+        <field name="sequenceNum" title="Sequence Number"><text/></field>
+        <field name="submitButton" title="Assign Category" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListProductCategoryMembersForm" type="list" list-name="categoryMembers" default-entity-name="PimProductCategoryMember" style="basic-table">
+        <field name="productCategoryId" title="Category">
+            <display-entity entity-name="PimProductCategory" description="${categoryName} [${productCategoryId}]"/>
+        </field>
+        <field name="fromDate" title="From Date"><display/></field>
+        <field name="thruDate" title="Thru Date"><display/></field>
+        <field name="sequenceNum" title="Sequence"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductCategoryMember" also-url-parameter="false">
+                <parameter param-name="productId"/>
+                <parameter param-name="productCategoryId"/>
+                <parameter param-name="fromDate"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Product Feature Appl Forms -->
+    <form name="AddProductFeatureApplForm" type="single" target="createPimProductFeatureAppl" default-entity-name="PimProductFeatureAppl">
+        <field name="productId"><hidden value="${productId}"/></field>
+        <field name="productFeatureId" title="Product Feature">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProductFeature" description="${description} [${productFeatureId}]"/>
+            </drop-down>
+        </field>
+        <field name="fromDate" title="From Date"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date"><date-time type="timestamp"/></field>
+        <field name="sequenceNum" title="Sequence Number"><text/></field>
+        <field name="submitButton" title="Apply Feature" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListProductFeatureApplsForm" type="list" list-name="featureAppls" default-entity-name="PimProductFeatureAppl" style="basic-table">
+        <field name="productFeatureId" title="Feature">
+            <display-entity entity-name="PimProductFeature" description="${description}"/>
+        </field>
+        <field name="fromDate" title="From Date"><display/></field>
+        <field name="thruDate" title="Thru Date"><display/></field>
+        <field name="sequenceNum" title="Sequence"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductFeatureAppl" also-url-parameter="false">
+                <parameter param-name="productId"/>
+                <parameter param-name="productFeatureId"/>
+                <parameter param-name="fromDate"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Good Identification Forms -->
+    <form name="AddGoodIdentificationForm" type="single" target="createPimGoodIdentification" default-entity-name="PimGoodIdentification">
+        <field name="productId"><hidden value="${productId}"/></field>
+        <field name="goodIdentificationTypeId" title="Identification Type">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimGoodIdentificationType" description="${description}"/>
+            </drop-down>
+        </field>
+        <field name="idValue" title="ID Value"><text/></field>
+        <field name="submitButton" title="Add ID" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListGoodIdentificationsForm" type="list" list-name="goodIdentifications" default-entity-name="PimGoodIdentification" style="basic-table">
+        <field name="goodIdentificationTypeId" title="Type">
+            <display-entity entity-name="PimGoodIdentificationType"/>
+        </field>
+        <field name="idValue" title="Value"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimGoodIdentification" also-url-parameter="false">
+                <parameter param-name="productId"/>
+                <parameter param-name="goodIdentificationTypeId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Category / Taxonomy Forms -->
+    <form name="FindCategoryForm" type="single" target="FindCategory" default-entity-name="PimProductCategory">
+        <field name="productCategoryId" title="Category ID"><text-find/></field>
+        <field name="categoryName" title="Category Name"><text-find/></field>
+        <field name="productCategoryTypeId" title="Category Type">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="PimProductCategoryType" description="${description}"/>
+            </drop-down>
+        </field>
+        <field name="searchButton" title="Search"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListCategoriesForm" type="list" list-name="listIt" target="FindCategory" paginate-target="FindCategory"
+          default-entity-name="PimProductCategory" separate-columns="true" style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="entityName" value="PimProductCategory"/>
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="noConditionFind" value="Y"/>
+            </service>
+        </actions>
+        <field name="productCategoryId" title="Category ID" widget-style="buttontext">
+            <hyperlink description="${productCategoryId}" target="EditCategory">
+                <parameter param-name="productCategoryId"/>
+            </hyperlink>
+        </field>
+        <field name="categoryName" title="Category Name"><display/></field>
+        <field name="productCategoryTypeId" title="Category Type">
+            <display-entity entity-name="PimProductCategoryType"/>
+        </field>
+        <field name="description" title="Description"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductCategory" also-url-parameter="false">
+                <parameter param-name="productCategoryId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="EditCategoryForm" type="single" target="updatePimProductCategory" title="" default-map-name="category" default-entity-name="PimProductCategory">
+        <alt-target use-when="category==null" target="createPimProductCategory"/>
+        <field name="productCategoryId" title="Category ID" use-when="category!=null"><display/></field>
+        <field name="productCategoryId" title="Category ID" use-when="category==null"><text/></field>
+        <field name="categoryName" title="Category Name" required-field="true"><text/></field>
+        <field name="productCategoryTypeId" title="Category Type">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProductCategoryType" description="${description}"/>
+            </drop-down>
+        </field>
+        <field name="description" title="Description"><text size="50"/></field>
+        <field name="submitButton" title="Save" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <!-- Category Rollup Forms (Taxonomy) -->
+    <form name="AddCategoryRollupForm" type="single" target="createPimProductCategoryRollup" default-entity-name="PimProductCategoryRollup">
+        <field name="parentCategoryId" title="Parent Category">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProductCategory" key-field-name="productCategoryId" description="${categoryName} [${productCategoryId}]"/>
+            </drop-down>
+        </field>
+        <field name="childCategoryId" title="Child Category">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProductCategory" key-field-name="productCategoryId" description="${categoryName} [${productCategoryId}]"/>
+            </drop-down>
+        </field>
+        <field name="fromDate" title="From Date"><date-time type="timestamp"/></field>
+        <field name="thruDate" title="Thru Date"><date-time type="timestamp"/></field>
+        <field name="submitButton" title="Link Categories" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListCategoryRollupsForm" type="list" list-name="categoryRollups" default-entity-name="PimProductCategoryRollup" style="basic-table">
+        <field name="parentCategoryId" title="Parent Category">
+            <display-entity entity-name="PimProductCategory" key-field-name="productCategoryId" description="${categoryName} [${productCategoryId}]"/>
+        </field>
+        <field name="childCategoryId" title="Child Category">
+            <display-entity entity-name="PimProductCategory" key-field-name="productCategoryId" description="${categoryName} [${productCategoryId}]"/>
+        </field>
+        <field name="fromDate" title="From Date"><display/></field>
+        <field name="thruDate" title="Thru Date"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductCategoryRollup" also-url-parameter="false">
+                <parameter param-name="parentCategoryId"/>
+                <parameter param-name="childCategoryId"/>
+                <parameter param-name="fromDate"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <!-- Feature / Subtype Forms -->
+    <form name="FindFeatureForm" type="single" target="FindFeature" default-entity-name="PimProductFeature">
+        <field name="productFeatureId" title="Feature ID"><text-find/></field>
+        <field name="description" title="Description"><text-find/></field>
+        <field name="productFeatureTypeId" title="Feature Type">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="PimProductFeatureType" description="${description}"/>
+            </drop-down>
+        </field>
+        <field name="searchButton" title="Search"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListFeaturesForm" type="list" list-name="listIt" target="FindFeature" paginate-target="FindFeature"
+          default-entity-name="PimProductFeature" separate-columns="true" style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="entityName" value="PimProductFeature"/>
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="noConditionFind" value="Y"/>
+            </service>
+        </actions>
+        <field name="productFeatureId" title="Feature ID" widget-style="buttontext">
+            <hyperlink description="${productFeatureId}" target="EditFeature">
+                <parameter param-name="productFeatureId"/>
+            </hyperlink>
+        </field>
+        <field name="description" title="Description"><display/></field>
+        <field name="productFeatureTypeId" title="Feature Type">
+            <display-entity entity-name="PimProductFeatureType"/>
+        </field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductFeature" also-url-parameter="false">
+                <parameter param-name="productFeatureId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="EditFeatureForm" type="single" target="updatePimProductFeature" title="" default-map-name="feature" default-entity-name="PimProductFeature">
+        <alt-target use-when="feature==null" target="createPimProductFeature"/>
+        <field name="productFeatureId" title="Feature ID" use-when="feature!=null"><display/></field>
+        <field name="productFeatureId" title="Feature ID" use-when="feature==null"><text/></field>
+        <field name="description" title="Description" required-field="true"><text/></field>
+        <field name="productFeatureTypeId" title="Feature Type">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimProductFeatureType" description="${description}"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="Save" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <!-- Facility Forms -->
+    <form name="FindFacilityForm" type="single" target="FindFacility" default-entity-name="PimFacility">
+        <field name="facilityId" title="Facility ID"><text-find/></field>
+        <field name="facilityName" title="Facility Name"><text-find/></field>
+        <field name="facilityTypeEnumId" title="Facility Type">
+            <drop-down allow-empty="true">
+                <option key="WAREHOUSE" description="Warehouse"/>
+                <option key="STORE" description="Store"/>
+                <option key="PLANT" description="Manufacturing Plant"/>
+            </drop-down>
+        </field>
+        <field name="searchButton" title="Search"><submit button-type="button"/></field>
+    </form>
+
+    <form name="ListFacilitiesForm" type="list" list-name="listIt" target="FindFacility" paginate-target="FindFacility"
+          default-entity-name="PimFacility" separate-columns="true" style="basic-table hover-bar">
+        <actions>
+            <service service-name="performFind" result-map="result" result-map-list="listIt">
+                <field-map field-name="entityName" value="PimFacility"/>
+                <field-map field-name="inputFields" from-field="parameters"/>
+                <field-map field-name="noConditionFind" value="Y"/>
+            </service>
+        </actions>
+        <field name="facilityId" title="Facility ID" widget-style="buttontext">
+            <hyperlink description="${facilityId}" target="EditFacility">
+                <parameter param-name="facilityId"/>
+            </hyperlink>
+        </field>
+        <field name="facilityName" title="Facility Name"><display/></field>
+        <field name="facilityTypeEnumId" title="Facility Type"><display/></field>
+        <field name="parentFacilityId" title="Parent Facility"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimFacility" also-url-parameter="false">
+                <parameter param-name="facilityId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="EditFacilityForm" type="single" target="updatePimFacility" title="" default-map-name="facility" default-entity-name="PimFacility">
+        <alt-target use-when="facility==null" target="createPimFacility"/>
+        <field name="facilityId" title="Facility ID" use-when="facility!=null"><display/></field>
+        <field name="facilityId" title="Facility ID" use-when="facility==null"><text/></field>
+        <field name="facilityName" title="Facility Name" required-field="true"><text/></field>
+        <field name="facilityTypeEnumId" title="Facility Type">
+            <drop-down allow-empty="false">
+                <option key="WAREHOUSE" description="Warehouse"/>
+                <option key="STORE" description="Store"/>
+                <option key="PLANT" description="Manufacturing Plant"/>
+            </drop-down>
+        </field>
+        <field name="parentFacilityId" title="Parent Facility">
+            <drop-down allow-empty="true">
+                <entity-options entity-name="PimFacility" key-field-name="facilityId" description="${facilityName} [${facilityId}]"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="Save" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <!-- Facility Locations Forms -->
+    <form name="ListFacilityLocationsForm" type="list" list-name="locations" default-entity-name="PimFacilityLocation" style="basic-table">
+        <field name="locationSeqId" title="Location Seq ID"><display/></field>
+        <field name="areaId" title="Area"><display/></field>
+        <field name="aisleId" title="Aisle"><display/></field>
+        <field name="sectionId" title="Section"><display/></field>
+        <field name="levelId" title="Level"><display/></field>
+        <field name="positionId" title="Position"><display/></field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimFacilityLocation" also-url-parameter="false">
+                <parameter param-name="facilityId"/>
+                <parameter param-name="locationSeqId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="AddFacilityLocationForm" type="single" target="createPimFacilityLocation" default-entity-name="PimFacilityLocation">
+        <field name="facilityId"><hidden/></field>
+        <field name="locationSeqId" title="Location Seq ID" required-field="true"><text size="10"/></field>
+        <field name="areaId" title="Area ID"><text size="10"/></field>
+        <field name="aisleId" title="Aisle ID"><text size="10"/></field>
+        <field name="sectionId" title="Section ID"><text size="10"/></field>
+        <field name="levelId" title="Level ID"><text size="10"/></field>
+        <field name="positionId" title="Position ID"><text size="10"/></field>
+        <field name="submitButton" title="Add Location" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+    <!-- Product Facilities for Product Tab -->
+    <form name="ListProductFacilitiesForProductForm" type="list" list-name="productFacilities" default-entity-name="PimProductFacility" style="basic-table">
+        <field name="productId"><hidden/></field>
+        <field name="facilityId" title="Facility">
+            <display-entity entity-name="PimFacility" description="${facilityName} [${facilityId}]"/>
+        </field>
+        <field name="deleteLink" title="Delete" widget-style="buttontext">
+            <hyperlink description="Delete" target="deletePimProductFacility" also-url-parameter="false">
+                <parameter param-name="productId"/>
+                <parameter param-name="facilityId"/>
+            </hyperlink>
+        </field>
+    </form>
+
+    <form name="AddProductFacilityForProductForm" type="single" target="createPimProductFacility" default-entity-name="PimProductFacility">
+        <field name="productId"><hidden/></field>
+        <field name="facilityId" title="Facility">
+            <drop-down allow-empty="false">
+                <entity-options entity-name="PimFacility" description="${facilityName} [${facilityId}]"/>
+            </drop-down>
+        </field>
+        <field name="submitButton" title="Link Facility" widget-style="smallSubmit"><submit button-type="button"/></field>
+    </form>
+
+</forms>

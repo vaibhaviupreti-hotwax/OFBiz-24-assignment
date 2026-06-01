@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<screens xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://ofbiz.apache.org/Widget-Screen" xsi:schemaLocation="http://ofbiz.apache.org/Widget-Screen http://ofbiz.apache.org/dtds/widget-screen.xsd">
+
+    <screen name="main">
+        <section>
+            <actions>
+                <set field="headerItem" value="main"/>
+                <set field="titleProperty" value="ProductinformationmgrApplication"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="h1"><label>Product Information Manager Dashboard</label></container>
+                        <container style="h2"><label>Manage entities:</label></container>
+                        <container style="button-bar">
+                            <link target="FindProduct" text="Manage Products" style="buttontext"/>
+                            <link target="FindCategory" text="Manage Categories &amp; Taxonomy" style="buttontext"/>
+                            <link target="FindFeature" text="Manage Features" style="buttontext"/>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3">Boilerplate Data and Patterns Demonstrated</label>
+                            </container>
+                            <container style="screenlet-body">
+                                <label text="This custom component implements the following modeling concepts:"/>
+                                <container style="margin-left: 20px;">
+                                    <label text="- Product definition and Product Types (PimProduct, PimProductType)"/>
+                                    <label text="- Product Category &amp; Taxonomy Rollups (PimProductCategory, PimProductCategoryMember, PimProductCategoryRollup)"/>
+                                    <label text="- Non-Mutually Exclusive Sets of Subtypes (PimGoodIdentification, PimGoodIdentificationType)"/>
+                                    <label text="- Product Features &amp; Applications (PimProductFeature, PimProductFeatureType, PimProductFeatureAppl)"/>
+                                    <label text="- Product Pricing (PimProductPrice)"/>
+                                    <label text="- Product Associations (PimProductAssoc)"/>
+                                </container>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Screens -->
+    <screen name="FindProduct">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="titleProperty" value="Find Product"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                            <decorator-section name="menu-bar">
+                                <container style="button-bar">
+                                    <link target="EditProduct" text="New Product" style="buttontext create"/>
+                                </container>
+                            </decorator-section>
+                            <decorator-section name="search-options">
+                                <include-form name="FindProductForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                            <decorator-section name="search-results">
+                                <include-form name="ListProductsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                        </decorator-screen>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditProduct">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProduct"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <section>
+                            <condition>
+                                <not><if-empty field="product"/></not>
+                            </condition>
+                            <widgets>
+                                <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                                <container style="screenlet">
+                                    <container style="screenlet-title-bar">
+                                        <label style="h3" text="Edit Product details: ${product.productName} [${product.productId}]"/>
+                                    </container>
+                                    <container style="screenlet-body">
+                                        <include-form name="EditProductForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                                    </container>
+                                </container>
+                            </widgets>
+                            <fail-widgets>
+                                <container style="screenlet">
+                                    <container style="screenlet-title-bar">
+                                        <label style="h3" text="New Product"/>
+                                    </container>
+                                    <container style="screenlet-body">
+                                        <include-form name="EditProductForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                                    </container>
+                                </container>
+                            </fail-widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Content Screen -->
+    <screen name="EditProductContent">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProductContent"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimProductContent" list="productContents">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Add Product Content for product: ${product.productName} [${product.productId}]"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddProductContentForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Product Contents List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListProductContentsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Price Screen -->
+    <screen name="EditProductPrice">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProductPrice"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimProductPrice" list="productPrices">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Add Pricing for product: ${product.productName} [${product.productId}]"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddProductPriceForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Product Prices List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListProductPricesForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Dimension Screen -->
+    <screen name="EditProductDimension">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProductDimension"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimProductDimension" list="productDimensions">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Add Product Dimensions for product: ${product.productName} [${product.productId}]"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddProductDimensionForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Product Dimensions List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListProductDimensionsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Association Screen -->
+    <screen name="EditProductAssoc">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProductAssoc"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimProductAssoc" list="productAssocs">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Add Product Association for product: ${product.productName} [${product.productId}]"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddProductAssocForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Product Associations List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListProductAssocsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Category Member Screen -->
+    <screen name="EditProductCategoryMember">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProductCategoryMember"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimProductCategoryMember" list="categoryMembers">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Assign Product Category for product: ${product.productName} [${product.productId}]"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddProductCategoryMemberForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Assigned Categories List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListProductCategoryMembersForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Feature Appl Screen -->
+    <screen name="EditProductFeatureAppl">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProductFeatureAppl"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimProductFeatureAppl" list="featureAppls">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Apply Product Feature for product: ${product.productName} [${product.productId}]"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddProductFeatureApplForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Applied Features List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListProductFeatureApplsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Good Identification Screen -->
+    <screen name="EditGoodIdentification">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editGoodIdentification"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimGoodIdentification" list="goodIdentifications">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <include-menu name="EditProductTabBar" location="component://productinformationmgr/widget/ProductinformationmgrMenus.xml"/>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Add Product Identification for product: ${product.productName} [${product.productId}]"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddGoodIdentificationForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Product Identifications List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListGoodIdentificationsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Category / Taxonomy Screens -->
+    <screen name="FindCategory">
+        <section>
+            <actions>
+                <set field="headerItem" value="categories"/>
+                <set field="titleProperty" value="Find Category"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                            <decorator-section name="menu-bar">
+                                <container style="button-bar">
+                                    <link target="EditCategory" text="New Category" style="buttontext create"/>
+                                    <link target="EditCategoryRollup" text="Manage Rollups (Taxonomy)" style="buttontext"/>
+                                </container>
+                            </decorator-section>
+                            <decorator-section name="search-options">
+                                <include-form name="FindCategoryForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                            <decorator-section name="search-results">
+                                <include-form name="ListCategoriesForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                        </decorator-screen>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditCategory">
+        <section>
+            <actions>
+                <set field="headerItem" value="categories"/>
+                <set field="productCategoryId" from-field="parameters.productCategoryId"/>
+                <entity-one entity-name="PimProductCategory" value-field="category"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Create/Edit Category"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="EditCategoryForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditCategoryRollup">
+        <section>
+            <actions>
+                <set field="headerItem" value="categories"/>
+                <entity-condition entity-name="PimProductCategoryRollup" list="categoryRollups"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Add Category Rollup (Taxonomy Parent-Child relationship)"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="AddCategoryRollupForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Category Rollups List"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="ListCategoryRollupsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Feature Screens -->
+    <screen name="FindFeature">
+        <section>
+            <actions>
+                <set field="headerItem" value="features"/>
+                <set field="titleProperty" value="Find Feature"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                            <decorator-section name="menu-bar">
+                                <container style="button-bar">
+                                    <link target="EditFeature" text="New Feature" style="buttontext create"/>
+                                </container>
+                            </decorator-section>
+                            <decorator-section name="search-options">
+                                <include-form name="FindFeatureForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                            <decorator-section name="search-results">
+                                <include-form name="ListFeaturesForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                        </decorator-screen>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditFeature">
+        <section>
+            <actions>
+                <set field="headerItem" value="features"/>
+                <set field="productFeatureId" from-field="parameters.productFeatureId"/>
+                <entity-one entity-name="PimProductFeature" value-field="feature"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Create/Edit Feature"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="EditFeatureForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Facility Screens -->
+    <screen name="FindFacility">
+        <section>
+            <actions>
+                <set field="headerItem" value="facilities"/>
+                <set field="titleProperty" value="Find Facility"/>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <decorator-screen name="FindScreenDecorator" location="component://common/widget/CommonScreens.xml">
+                            <decorator-section name="menu-bar">
+                                <container style="button-bar">
+                                    <link target="EditFacility" text="New Facility" style="buttontext create"/>
+                                </container>
+                            </decorator-section>
+                            <decorator-section name="search-options">
+                                <include-form name="FindFacilityForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                            <decorator-section name="search-results">
+                                <include-form name="ListFacilitiesForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </decorator-section>
+                        </decorator-screen>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <screen name="EditFacility">
+        <section>
+            <actions>
+                <set field="headerItem" value="facilities"/>
+                <set field="facilityId" from-field="parameters.facilityId"/>
+                <entity-one entity-name="PimFacility" value-field="facility"/>
+                <entity-condition entity-name="PimFacilityLocation" list="locations">
+                    <condition-expr field-name="facilityId" from-field="facilityId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <container style="screenlet">
+                            <container style="screenlet-title-bar">
+                                <label style="h3" text="Create/Edit Facility Details"/>
+                            </container>
+                            <container style="screenlet-body">
+                                <include-form name="EditFacilityForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                            </container>
+                        </container>
+
+                        <section use-when="facility!=null">
+                            <widgets>
+                                <container style="screenlet">
+                                    <container style="screenlet-title-bar">
+                                        <label style="h3" text="Add Facility Location"/>
+                                    </container>
+                                    <container style="screenlet-body">
+                                        <include-form name="AddFacilityLocationForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                                    </container>
+                                </container>
+                                <container style="screenlet">
+                                    <container style="screenlet-title-bar">
+                                        <label style="h3" text="Locations list"/>
+                                    </container>
+                                    <container style="screenlet-body">
+                                        <include-form name="ListFacilityLocationsForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                                    </container>
+                                </container>
+                            </widgets>
+                        </section>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+    <!-- Product Facility Screen (Tab in Product Edit Page) -->
+    <screen name="EditProductFacility">
+        <section>
+            <actions>
+                <set field="headerItem" value="products"/>
+                <set field="tabButtonItem" value="editProductFacility"/>
+                <set field="productId" from-field="parameters.productId"/>
+                <entity-one entity-name="PimProduct" value-field="product"/>
+                <entity-condition entity-name="PimProductFacility" list="productFacilities">
+                    <condition-expr field-name="productId" from-field="productId"/>
+                </entity-condition>
+            </actions>
+            <widgets>
+                <decorator-screen name="ProductinformationmgrCommonDecorator" location="${parameters.mainDecoratorLocation}">
+                    <decorator-section name="body">
+                        <decorator-screen name="EditProductTabBarDecorator" location="component://productinformationmgr/widget/CommonScreens.xml">
+                            <decorator-section name="product-screens">
+                                <container style="screenlet">
+                                    <container style="screenlet-title-bar">
+                                        <label style="h3" text="Add Facility Association for ${product.productName} [${product.productId}]"/>
+                                    </container>
+                                    <container style="screenlet-body">
+                                        <include-form name="AddProductFacilityForProductForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                                    </container>
+                                </container>
+                                <container style="screenlet">
+                                    <container style="screenlet-title-bar">
+                                        <label style="h3" text="Linked Facilities"/>
+                                    </container>
+                                    <container style="screenlet-body">
+                                        <include-form name="ListProductFacilitiesForProductForm" location="component://productinformationmgr/widget/ProductinformationmgrForms.xml"/>
+                                    </container>
+                                </container>
+                            </decorator-section>
+                        </decorator-screen>
+                    </decorator-section>
+                </decorator-screen>
+            </widgets>
+        </section>
+    </screen>
+
+</screens>
